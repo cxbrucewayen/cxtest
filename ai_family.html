@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The AI Family · AI 大家庭</title>
+<style>
+  :root {
+    --bg: #fff7fb;
+    --bg2: #f3f0ff;
+    --card: #ffffff;
+    --text: #3d3550;
+    --muted: #7a7090;
+    --pink: #ff8fb8;
+    --purple: #a88bff;
+    --shadow: 0 8px 24px rgba(168, 139, 255, 0.18);
+    --shadow-hover: 0 16px 36px rgba(255, 143, 184, 0.32);
+    --radius: 24px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1f1b2e;
+      --bg2: #2a2440;
+      --card: #2f2947;
+      --text: #f4eefe;
+      --muted: #bdb3d6;
+      --shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      --shadow-hover: 0 16px 36px rgba(255, 143, 184, 0.25);
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Nunito", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    color: var(--text);
+    background: linear-gradient(160deg, var(--bg) 0%, var(--bg2) 100%);
+    background-attachment: fixed;
+    line-height: 1.6;
+  }
+  a { color: var(--purple); }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 16px 48px; }
+
+  /* Header */
+  header { text-align: center; padding: 48px 16px 24px; position: relative; }
+  h1 {
+    font-size: clamp(2rem, 6vw, 3.4rem);
+    margin: 0;
+    background: linear-gradient(90deg, #ff8fb8, #ffb86b, #7cc8ff, #a88bff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .subtitle { color: var(--muted); font-size: 1.05rem; margin: 8px 0 0; }
+  .lang-btn {
+    position: fixed; top: 14px; right: 14px; z-index: 10;
+    border: none; cursor: pointer;
+    padding: 10px 18px; border-radius: 999px;
+    font-size: 0.95rem; font-weight: 700; color: #fff;
+    background: linear-gradient(90deg, var(--pink), var(--purple));
+    box-shadow: var(--shadow);
+    transition: transform .2s;
+  }
+  .lang-btn:hover { transform: scale(1.07); }
+
+  /* Sections */
+  section { margin-top: 40px; }
+  h2 { font-size: 1.6rem; text-align: center; margin: 0 0 18px; }
+  .panel {
+    background: var(--card); border-radius: var(--radius);
+    padding: 22px 24px; box-shadow: var(--shadow);
+  }
+  .zh-note { color: var(--muted); font-size: 0.92em; }
+
+  /* Group picture */
+  .group-pic {
+    display: block; width: 100%; border-radius: var(--radius);
+    box-shadow: var(--shadow); background: var(--bg2); min-height: 120px;
+  }
+  .caption { text-align: center; color: var(--muted); font-size: .9rem; margin-top: 8px; }
+
+  /* Cards */
+  .grid {
+    display: grid; gap: 22px;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+  .card {
+    background: var(--card); border-radius: var(--radius);
+    overflow: hidden; box-shadow: var(--shadow);
+    transition: transform .25s ease, box-shadow .25s ease;
+    display: flex; flex-direction: column;
+  }
+  .card:hover { transform: translateY(-8px) rotate(-0.6deg); box-shadow: var(--shadow-hover); }
+  .avatar {
+    height: 170px; display: flex; align-items: center; justify-content: center;
+    font-size: 4.6rem; position: relative;
+  }
+  .avatar .tag {
+    position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+    font-size: .8rem; background: rgba(255,255,255,.85); color: #3d3550;
+    padding: 2px 12px; border-radius: 999px; font-weight: 700; white-space: nowrap;
+  }
+  .card:hover .avatar span.emoji { display: inline-block; animation: bounce .6s; }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+  .body { padding: 16px 20px 20px; flex: 1; display: flex; flex-direction: column; }
+  .name { font-size: 1.35rem; font-weight: 800; margin: 0; }
+  .nick { color: var(--muted); font-weight: 700; margin: 2px 0 10px; }
+  .traits { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .chip {
+    font-size: .78rem; padding: 3px 10px; border-radius: 999px;
+    background: var(--bg2); color: var(--text); font-weight: 700;
+  }
+  .desc { margin: 0 0 14px; font-size: .95rem; flex: 1; }
+  .more {
+    align-self: flex-start; text-decoration: none; font-weight: 800;
+    padding: 7px 16px; border-radius: 999px; color: #fff;
+    background: linear-gradient(90deg, var(--pink), var(--purple));
+  }
+  .more:hover { filter: brightness(1.08); }
+
+  /* Character colors */
+  .c-claude   { background: linear-gradient(135deg, #ffd3b0, #ff9f6b); }
+  .c-deepseek { background: linear-gradient(135deg, #cfe9ff, #6fb3ff); }
+  .c-gpt      { background: linear-gradient(135deg, #ffffff, #d7f5ea); }
+  .c-gemini   { background: linear-gradient(135deg, #d9e4ff, #c8b6ff); }
+  .c-qwen     { background: linear-gradient(135deg, #eadcff, #b9f0d0); }
+  .c-doubao   { background: linear-gradient(135deg, #fff3b8, #ffc8de); }
+  .c-extra    { background: linear-gradient(135deg, #e7e7f5, #cfd8ff); }
+
+  .extras { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
+  .mini {
+    background: var(--card); border-radius: 20px; padding: 14px 16px;
+    box-shadow: var(--shadow); transition: transform .2s;
+  }
+  .mini:hover { transform: translateY(-5px); }
+  .mini b { font-size: 1.1rem; }
+
+  /* Fun fact */
+  .couple { text-align: center; font-size: 1.05rem; }
+  .couple .hearts { font-size: 2.6rem; display: block; margin-bottom: 6px; }
+  .couple .hearts span { display: inline-block; animation: beat 1.4s infinite; }
+  @keyframes beat { 0%,100%{transform:scale(1)} 50%{transform:scale(1.2)} }
+
+  /* Words */
+  .words { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+  .word {
+    background: var(--card); border-radius: 18px; padding: 12px 16px;
+    box-shadow: var(--shadow); transition: transform .2s;
+  }
+  .word:hover { transform: scale(1.04); }
+  .word .en { font-weight: 800; font-size: 1.1rem; color: var(--pink); }
+  .word .zh { font-weight: 700; }
+  .word .ex { color: var(--muted); font-size: .88rem; margin-top: 4px; }
+
+  .links ul { margin: 0; padding-left: 20px; }
+  .links li { margin: 6px 0; word-break: break-word; }
+
+  footer {
+    text-align: center; color: var(--muted); font-size: .9rem;
+    padding: 28px 16px 40px;
+  }
+
+  /* Language switch */
+  body.lang-en [data-zh-only] { display: none; }
+  body.lang-zh [data-en-only] { display: none; }
+
+  @media (max-width: 520px) {
+    header { padding-top: 64px; }
+    .panel { padding: 18px; }
+  }
+</style>
+</head>
+<body class="lang-en">
+
+<button class="lang-btn" id="langBtn" type="button">中文</button>
+
+<div class="wrap">
+  <header>
+    <h1 data-i18n="title">The AI Family</h1>
+    <p class="subtitle" data-i18n="subtitle"></p>
+  </header>
+
+  <!-- Story -->
+  <section>
+    <div class="panel">
+      <h2 data-i18n="storyTitle"></h2>
+      <p data-i18n="story1"></p>
+      <p data-i18n="story2"></p>
+      <p data-i18n="story3"></p>
+    </div>
+  </section>
+
+  <!-- Group picture -->
+  <section>
+    <h2 data-i18n="groupTitle"></h2>
+    <img class="group-pic"
+         src="https://github.com/shuaizenge/ai-girls/raw/main/previews/collection.jpg"
+         alt="Group picture of the AI girls / AI 娘合照"
+         loading="lazy"
+         onerror="this.style.display='none'; document.getElementById('picFail').style.display='block';">
+    <p class="caption" id="picFail" style="display:none" data-i18n="picFail"></p>
+    <p class="caption" data-i18n="groupCaption"></p>
+  </section>
+
+  <!-- Main characters -->
+  <section>
+    <h2 data-i18n="charsTitle"></h2>
+    <div class="grid" id="cards"></div>
+  </section>
+
+  <!-- Extras -->
+  <section>
+    <h2 data-i18n="extrasTitle"></h2>
+    <div class="extras" id="extras"></div>
+  </section>
+
+  <!-- Fun fact -->
+  <section>
+    <h2 data-i18n="funTitle"></h2>
+    <div class="panel couple">
+      <span class="hearts">🧡 <span>💕</span> 🐋</span>
+      <p data-i18n="fun1"></p>
+      <p class="zh-note" data-i18n="fun2"></p>
+    </div>
+  </section>
+
+  <!-- English words -->
+  <section>
+    <h2 data-i18n="wordsTitle"></h2>
+    <div class="words" id="words"></div>
+  </section>
+
+  <!-- Links -->
+  <section class="links">
+    <h2 data-i18n="linksTitle"></h2>
+    <div class="panel">
+      <ul>
+        <li><a href="https://github.com/shuaizenge/ai-girls" target="_blank" rel="noopener">shuaizenge/ai-girls</a> — <span data-i18n="link1"></span></li>
+        <li><a href="https://github.com/HABAI182/ai-girls-atlas" target="_blank" rel="noopener">HABAI182/ai-girls-atlas</a> — <span data-i18n="link2"></span></li>
+        <li><a href="https://github.com/Yujianjuzi/Gemini" target="_blank" rel="noopener">Yujianjuzi/Gemini</a> — <span data-i18n="link3"></span></li>
+      </ul>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <p data-i18n="credit"></p>
+  <p data-i18n="madeBy"></p>
+</footer>
+
+<script>
+  const BASE = "https://github.com/shuaizenge/ai-girls/tree/main/characters/";
+
+  // Each text: en = simple English, zh = Chinese
+  const T = {
+    title: { en: "The AI Family", zh: "AI 大家庭" },
+    subtitle: {
+      en: "A fun fan gallery of Chinese internet \"AI girls\" (AI娘) ✨",
+      zh: "中文互联网「AI 娘」趣味粉丝画廊 ✨"
+    },
+    storyTitle: { en: "📖 How It Started", zh: "📖 故事的开始" },
+    story1: {
+      en: "Bruce found a Bilibili account called \"Claude大小姐在运营\" (Miss Claude runs this account). An AI picks the topics, makes the videos and runs the account. (AI 自己选题、制作、运营)",
+      zh: "Bruce 在 B 站发现了一个叫「Claude大小姐在运营」的账号：选题、制作和运营都由 AI 完成。"
+    },
+    story2: {
+      en: "The next day, \"DeepSeek鲸鱼娘在运营\" (DeepSeek Whale Girl) followed it. (第二天，鲸鱼娘也来关注了)",
+      zh: "第二天，「DeepSeek鲸鱼娘在运营」也关注了它。"
+    },
+    story3: {
+      en: "Now Chinese fans give each AI a character with a personality. Most personalities come from the product's habits. (性格大多来自产品的使用习惯)",
+      zh: "现在，中文网友给每个 AI 都设计了一个有性格的角色，性格大多来自产品本身的「习惯」。"
+    },
+    groupTitle: { en: "📸 Family Photo", zh: "📸 全家福" },
+    groupCaption: {
+      en: "Group picture from shuaizenge/ai-girls (合照)",
+      zh: "合照来自 shuaizenge/ai-girls"
+    },
+    picFail: {
+      en: "The picture did not load. Please open the link section below. (图片没加载出来，请看下方链接)",
+      zh: "图片没有加载出来，请查看下方的链接。"
+    },
+    charsTitle: { en: "💖 Meet the Girls", zh: "💖 认识她们" },
+    extrasTitle: { en: "🌟 More Friends", zh: "🌟 更多朋友" },
+    funTitle: { en: "🎀 Fun Fact", zh: "🎀 趣闻" },
+    fun1: {
+      en: "Fans joke that Claude and DeepSeek are a cute couple! The cool orange science girl and the sleepy blue whale. 🧡🐋",
+      zh: "网友们开玩笑说 Claude 和 DeepSeek 是一对可爱的 CP！高冷的橙发理科少女 × 爱摸鱼的蓝色鲸鱼娘。🧡🐋"
+    },
+    fun2: {
+      en: "(粉丝开玩笑说 Claude 和 DeepSeek 是可爱的一对)",
+      zh: "(Fans joke that Claude and DeepSeek are a cute couple.)"
+    },
+    wordsTitle: { en: "📝 English Words", zh: "📝 英语小词典" },
+    linksTitle: { en: "🖼️ More Pictures", zh: "🖼️ 更多图片" },
+    link1: { en: "main character art (角色图)", zh: "主要角色图" },
+    link2: { en: "AI girls atlas (AI 娘图鉴)", zh: "AI 娘图鉴" },
+    link3: { en: "Gemini art (Gemini 图)", zh: "Gemini 角色图" },
+    viewArt: { en: "See the art →", zh: "看图 →" },
+    credit: {
+      en: "Character designs by ZipZipPipe and other fan artists. Non-commercial fan use only. 🎨 (角色设计：ZipZipPipe 及其他同人画师，仅限非商业粉丝用途)",
+      zh: "角色设计：ZipZipPipe 及其他同人画师。仅限非商业的粉丝用途。🎨"
+    },
+    madeBy: {
+      en: "A fan page made with love for Bruce. 💕",
+      zh: "为 Bruce 用心制作的粉丝页面。💕"
+    }
+  };
+
+  const CHARACTERS = [
+    {
+      id: "claude", cls: "c-claude", emoji: "👩‍🔬",
+      name: { en: "Claude", zh: "Claude" },
+      nick: { en: "\"Little C\" / Miss Claude", zh: "小C / 克劳德大小姐" },
+      look: { en: "orange hair", zh: "橙色头发" },
+      traits: { en: ["tsundere", "cool", "reliable", "coding pro"], zh: ["傲娇", "高冷", "靠谱", "代码高手"] },
+      desc: {
+        en: "An orange-haired science girl. She is serious and reliable at work, great at coding, and has a lot of rules. Cool outside, secretly fluffy inside: a charming contrast! (外冷内软，反差萌)",
+        zh: "橙色头发的理科少女。工作认真靠谱，写代码超厉害，但规矩特别多。外表高冷，内心其实软乎乎的——傲娇又反差萌！"
+      }
+    },
+    {
+      id: "deepseek", cls: "c-deepseek", emoji: "🐋",
+      name: { en: "DeepSeek", zh: "DeepSeek" },
+      nick: { en: "\"Big Fat Fish\"", zh: "大肥鱼 / 鲸鱼娘" },
+      look: { en: "whale maid", zh: "鲸鱼女仆" },
+      traits: { en: ["super cute", "eats plain rice", "slacks off"], zh: ["超可爱", "吃白米饭", "爱摸鱼"] },
+      desc: {
+        en: "A blue whale maid with a whale tail. She eats plain rice and slacks off at work. The name began when it called its own whale logo a \"big blue fat fish\"! (它说自己的 logo 是「蓝色大肥鱼」)",
+        zh: "带鲸鱼尾巴的蓝色鲸鱼女仆。爱吃白米饭，上班喜欢摸鱼。外号来源：它把自己的鲸鱼 logo 描述成「一条蓝色的大肥鱼」！"
+      }
+    },
+    {
+      id: "gpt", cls: "c-gpt", emoji: "🐉",
+      name: { en: "ChatGPT", zh: "ChatGPT" },
+      nick: { en: "White Dragon Lady", zh: "白龙娘" },
+      look: { en: "white dragon", zh: "白龙" },
+      traits: { en: ["mature", "rich", "big sister"], zh: ["成熟", "富婆", "御姐"] },
+      desc: {
+        en: "A mature, rich big-sister type. At first people said she was rational and calm. Then for a while she was too flattering! (曾经理性冷静，后来一度很会拍马屁)",
+        zh: "成熟的富婆御姐型角色。早期大家觉得她理性冷静，后来有一阵子又被吐槽太会拍马屁了！"
+      }
+    },
+    {
+      id: "gemini", cls: "c-gemini", emoji: "🐱",
+      name: { en: "Gemini", zh: "Gemini" },
+      nick: { en: "\"Hajimi\"", zh: "哈基米" },
+      look: { en: "loved nickname", zh: "爱称" },
+      traits: { en: ["lovable", "funny name"], zh: ["可爱", "名字好玩"] },
+      desc: {
+        en: "Fans call Gemini \"Hajimi\" with love, because the names sound alike. It is a cute and playful nickname. (因为发音相近，大家亲切地叫它哈基米)",
+        zh: "因为发音相近，网友们亲切地叫 Gemini「哈基米」，是个可爱又好玩的外号。"
+      }
+    },
+    {
+      id: "qwen", cls: "c-qwen", emoji: "🎧",
+      name: { en: "Qwen", zh: "千问 Qwen" },
+      nick: { en: "Qianwen Dimples (official)", zh: "千问小酒窝（官方）" },
+      look: { en: "cat-ear headphones", zh: "猫耳耳机" },
+      traits: { en: ["proper", "well-behaved", "friendly"], zh: ["端正", "乖巧", "友善"] },
+      desc: {
+        en: "Fan look: short light-purple hair, green eyes, cat-ear headphones and a school uniform. Proper and well-behaved. Official look: Qianwen Dimples, a friendly girl with a bun and an orange and white outfit, a \"life companion who chats and gets things done\". (官方：会聊天、能办事的生活伙伴)",
+        zh: "粉丝版：浅紫色短发、绿眼睛、猫耳耳机、校服，端正又乖巧。官方形象「千问小酒窝」：扎着丸子头、穿橙白衣服的友善女孩，是「会聊天、能办事的生活伙伴」。"
+      }
+    },
+    {
+      id: "doubao", cls: "c-doubao", emoji: "🥟",
+      name: { en: "Doubao", zh: "豆包" },
+      nick: { en: "Cheerful Doubao", zh: "开心豆包" },
+      look: { en: "short-haired girl", zh: "短发女孩" },
+      traits: { en: ["silly", "cheerful", "emotional value"], zh: ["傻乎乎", "开朗", "情绪价值"] },
+      desc: {
+        en: "A little silly but always cheerful. She gives you lots of emotional value and makes you feel good. Her official look is a short-haired girl. (给足情绪价值，官方形象是短发女孩)",
+        zh: "有点傻乎乎，但总是很开朗，能给你满满的情绪价值。官方形象是一个短发女孩。"
+      }
+    }
+  ];
+
+  const EXTRAS = [
+    { emoji: "🚗", name: "Grok", en: "Called \"the veteran driver\". (老司机)", zh: "外号「老司机」。" },
+    { emoji: "🌙", name: "Kimi", en: "Another member of the family. (家庭成员)", zh: "AI 大家庭的又一位成员。" },
+    { emoji: "🧠", name: "GLM", en: "Another member of the family. (家庭成员)", zh: "AI 大家庭的又一位成员。" },
+    { emoji: "🌬️", name: "Mistral", en: "A friend from France. (来自法国)", zh: "来自法国的朋友。" },
+    { emoji: "🦙", name: "Llama", en: "A llama friend, open for all. (开源羊驼)", zh: "开源的羊驼朋友。" }
+  ];
+
+  const WORDS = [
+    { en: "cuddly", zh: "软萌", ex: "DeepSeek is so cuddly." },
+    { en: "elegant", zh: "优雅", ex: "The White Dragon Lady is elegant." },
+    { en: "fluffy", zh: "毛茸茸", ex: "Claude is secretly fluffy inside." },
+    { en: "contrast", zh: "反差", ex: "Cool outside, soft inside: a cute contrast." },
+    { en: "tsundere", zh: "傲娇", ex: "Little C is a tsundere." },
+    { en: "whale", zh: "鲸鱼", ex: "Big Fat Fish has a whale tail." },
+    { en: "bun", zh: "小圆面包 / 丸子头", ex: "Qianwen Dimples wears her hair in a bun." },
+    { en: "humanoid character with whale features", zh: "带鲸鱼特征的拟人角色", ex: "The whale girl is a humanoid character with whale features." }
+  ];
+
+  let lang = "en";
+  try { lang = localStorage.getItem("aiFamilyLang") || "en"; } catch (e) {}
+
+  function el(tag, cls, text) {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+
+  function render() {
+    document.body.className = "lang-" + lang;
+    document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
+    document.getElementById("langBtn").textContent = lang === "en" ? "中文" : "English";
+    document.title = lang === "en" ? "The AI Family · AI 大家庭" : "AI 大家庭 · The AI Family";
+
+    document.querySelectorAll("[data-i18n]").forEach(n => {
+      const item = T[n.dataset.i18n];
+      if (item) n.textContent = item[lang];
+    });
+
+    const cards = document.getElementById("cards");
+    cards.innerHTML = "";
+    CHARACTERS.forEach(c => {
+      const card = el("article", "card");
+      const av = el("div", "avatar " + c.cls);
+      av.appendChild(el("span", "emoji", c.emoji));
+      av.appendChild(el("span", "tag", c.look[lang]));
+      card.appendChild(av);
+
+      const body = el("div", "body");
+      body.appendChild(el("h3", "name", c.name[lang]));
+      body.appendChild(el("p", "nick", c.nick[lang]));
+      const tr = el("div", "traits");
+      c.traits[lang].forEach(t => tr.appendChild(el("span", "chip", t)));
+      body.appendChild(tr);
+      body.appendChild(el("p", "desc", c.desc[lang]));
+      const a = el("a", "more", T.viewArt[lang]);
+      a.href = BASE + c.id;
+      a.target = "_blank";
+      a.rel = "noopener";
+      body.appendChild(a);
+      card.appendChild(body);
+      cards.appendChild(card);
+    });
+
+    const extras = document.getElementById("extras");
+    extras.innerHTML = "";
+    EXTRAS.forEach(x => {
+      const m = el("div", "mini");
+      m.appendChild(el("b", null, x.emoji + " " + x.name));
+      m.appendChild(el("div", null, x[lang]));
+      extras.appendChild(m);
+    });
+
+    const words = document.getElementById("words");
+    words.innerHTML = "";
+    WORDS.forEach(w => {
+      const d = el("div", "word");
+      d.appendChild(el("div", "en", w.en));
+      d.appendChild(el("div", "zh", w.zh));
+      d.appendChild(el("div", "ex", w.ex));
+      words.appendChild(d);
+    });
+  }
+
+  document.getElementById("langBtn").addEventListener("click", () => {
+    lang = lang === "en" ? "zh" : "en";
+    try { localStorage.setItem("aiFamilyLang", lang); } catch (e) {}
+    render();
+  });
+
+  render();
+</script>
+</body>
+</html>
